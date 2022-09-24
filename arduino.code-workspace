@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"name": "i2cScan",
+			"path": "i2cScan"
+		},
+		{
+			"name": "temperature",
+			"path": "temperature"
+		},
+		{
+			"name": "Funk433MHz/sender",
+			"path": "Funk433MHz/sender"
+		},
+		{
+			"name": "Funk433MHz/receiver",
+			"path": "Funk433MHz/receiver"
+		},
+		{
+			"name": "Weatherstation/server",
+			"path": "Weatherstation/server"
+		},
+		{
+			"name": "Weatherstation/client",
+			"path": "Weatherstation/client"
+		},
+		{
+			"name": "dcf77",
+			"path": "dcf77"
+		}
+	],
+	"settings": {}
+}
