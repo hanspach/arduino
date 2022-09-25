@@ -4,6 +4,8 @@
 extern bool fallingEdge;              // defined in dcf
 unsigned long t1;
 struct tm dt;
+extern bool minStart;
+void analysis(void*);
 
 void setup() {
   delay(1000);
@@ -23,6 +25,9 @@ void loop() {
   status = fallingEdge;
   t2 = millis();
   if((t2 - t1)  > 995) {
+    minStart = true;
+    analysis(NULL);
+    minStart = false;
     if(++dt.tm_sec > 59) {
       dt.tm_sec = 0;
       if(++dt.tm_min > 59) {
@@ -32,4 +37,7 @@ void loop() {
         } 
       }
     }
+    t1 = t2;
+  }
+  delay(10);
 }
