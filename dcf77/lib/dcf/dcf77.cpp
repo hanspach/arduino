@@ -6,6 +6,8 @@ struct tm dtDCF;
 bool minStart = false;
 bool validDCF = false;
 volatile bool fallingEdge = false; 
+unsigned long t1;
+struct tm dt;
 QueueHandle_t hQueue = NULL;
 
 bool checkParity(const uint8_t von, const uint8_t bis) {
@@ -105,4 +107,28 @@ void dcfInit() {
     hQueue = xQueueCreate(1, sizeof(struct tm));
     attachInterrupt(DCF_PIN, isrP15, CHANGE);
 //    xTaskCreate(analysis,"analysis",8192,NULL,1,NULL);  
+<<<<<<< HEAD
+=======
+}
+
+void setupDCF() {
+    dcfInit();
+    t1 = millis();
+}
+
+void evalDCF() {
+    static unsigned long t2;
+    static bool status = false;
+    static struct tm dtDCF;
+    if(fallingEdge && status != fallingEdge) {
+     // digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));         // toggle LED
+    }
+    status = fallingEdge;
+    t2 = millis();
+    if((t2 - t1)  > 995) {
+      analysis(NULL);
+      t1 = t2;
+    }
+    delay(20);
+>>>>>>> d1e7f6b8bdf2b16d9b13de80625e43a43c9cfad5
 }

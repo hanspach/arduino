@@ -1,21 +1,25 @@
-#include <header.h>
 #include <declarations.h>
+<<<<<<< HEAD
 
 extern bool fallingEdge;              // defined in dcf
 unsigned long t1;
 struct tm dt;
 extern bool minStart;
 void analysis(void*);
+=======
+#include <server.h>
+>>>>>>> d1e7f6b8bdf2b16d9b13de80625e43a43c9cfad5
 
 void setup() {
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
-  dcfInit();
-  t1 = millis();
+  setupDCF();
+  setupServer();
 }
 
 void loop() {
+<<<<<<< HEAD
   static unsigned long t2;
   static bool status = false;
   static struct tm dtDCF;
@@ -40,4 +44,7 @@ void loop() {
     t1 = t2;
   }
   delay(10);
+=======
+  runServer();
+>>>>>>> d1e7f6b8bdf2b16d9b13de80625e43a43c9cfad5
 }
