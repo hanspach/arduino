@@ -9,6 +9,7 @@
 #define ESP32_DEBUG   // for dubug purpose
 
 void dcfInit();
-void prepare();
-void evaluation();
+void setupDCF();
+
+void evalDCF();
 #endif

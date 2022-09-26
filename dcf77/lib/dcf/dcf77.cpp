@@ -109,20 +109,17 @@ void dcfInit() {
 //    xTaskCreate(analysis,"analysis",8192,NULL,1,NULL);  
 }
 
-void prepare() {
-    delay(1000);
-    pinMode(LED_BUILTIN, OUTPUT);
-    Serial.begin(9600);
+void setupDCF() {
     dcfInit();
     t1 = millis();
 }
 
-void evaluation() {
+void evalDCF() {
     static unsigned long t2;
     static bool status = false;
     static struct tm dtDCF;
     if(fallingEdge && status != fallingEdge) {
-      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));         // toggle LED
+     // digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));         // toggle LED
     }
     status = fallingEdge;
     t2 = millis();
