@@ -4,6 +4,7 @@
 
 const char*  ssid    = "Vodafone-CF6C";
 const char* pwd = "7HGZ2eGXrTFpbGLE";
+const char* msg;
 bool LEDstatus;
 WebServer server(80);
 
@@ -28,6 +29,11 @@ String SendHTML(uint8_t ledstat){
     ptr +="<p>LED Status: ON</p><a class=\"button button-off\" href=\"/ledoff\">OFF</a>\n";
   else
     ptr +="<p>LED Status: OFF</p><a class=\"button button-on\" href=\"/ledon\">ON</a>\n";
+  ptr += "<h3>";
+  if(msg != NULL && strlen(msg) > 0)
+    ptr += msg;
+  ptr += "</h3>";
+
   ptr +="</body>\n";
   ptr +="</html>\n";
   return ptr;
@@ -81,7 +87,8 @@ void setupServer() {
   Serial.println("HTTP server started");
 }
 
-void runServer() {
+void runServer(const char* dttxt) {
+  msg = dttxt;
   server.handleClient();
   digitalWrite(LED_BUILTIN, LEDstatus);
 }

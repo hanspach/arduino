@@ -7,7 +7,6 @@ bool minStart = false;
 bool validDCF = false;
 volatile bool fallingEdge = false; 
 unsigned long t1;
-struct tm dt;
 QueueHandle_t hQueue = NULL;
 
 bool checkParity(const uint8_t von, const uint8_t bis) {
@@ -26,7 +25,7 @@ void analysis(void* param) {
     bool p3 = false;
     bool valid = false;
 
-//    for(;;) {
+    for(;;) {
       if(minStart) {
           dtDCF.tm_hour = frame[29] + (frame[30] << 1) + (frame[31] << 2) + (frame[32] << 3) + frame[33] * 10 + frame[34] * 20;
           dtDCF.tm_min  = frame[21] + (frame[22] << 1) + (frame[23] << 2) + (frame[24] << 3) + frame[25] * 10 + frame[26] * 20 + frame[27] * 40;
@@ -61,7 +60,7 @@ void analysis(void* param) {
             minStart = false;
         }
         vTaskDelay(pdMS_TO_TICKS(20));
-//    }
+    }
 }
 
 void IRAM_ATTR isrP15() {
@@ -106,9 +105,7 @@ void dcfInit() {
     pinMode(DCF_PIN, INPUT_PULLUP);
     hQueue = xQueueCreate(1, sizeof(struct tm));
     attachInterrupt(DCF_PIN, isrP15, CHANGE);
-//    xTaskCreate(analysis,"analysis",8192,NULL,1,NULL);  
-<<<<<<< HEAD
-=======
+    xTaskCreate(analysis,"analysis",8192,NULL,1,NULL);  
 }
 
 void setupDCF() {
@@ -130,5 +127,4 @@ void evalDCF() {
       t1 = t2;
     }
     delay(20);
->>>>>>> d1e7f6b8bdf2b16d9b13de80625e43a43c9cfad5
 }

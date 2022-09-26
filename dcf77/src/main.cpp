@@ -1,14 +1,11 @@
 #include <declarations.h>
-<<<<<<< HEAD
+#include <server.h>
 
+extern QueueHandle_t hQueue;
 extern bool fallingEdge;              // defined in dcf
-unsigned long t1;
 struct tm dt;
 extern bool minStart;
 void analysis(void*);
-=======
-#include <server.h>
->>>>>>> d1e7f6b8bdf2b16d9b13de80625e43a43c9cfad5
 
 void setup() {
   delay(1000);
@@ -19,32 +16,14 @@ void setup() {
 }
 
 void loop() {
-<<<<<<< HEAD
-  static unsigned long t2;
-  static bool status = false;
-  static struct tm dtDCF;
-  if(fallingEdge && status != fallingEdge) {
-    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));         // toggle LED
-  }
-  status = fallingEdge;
-  t2 = millis();
-  if((t2 - t1)  > 995) {
-    minStart = true;
-    analysis(NULL);
-    minStart = false;
-    if(++dt.tm_sec > 59) {
-      dt.tm_sec = 0;
-      if(++dt.tm_min > 59) {
-        dt.tm_min = 0;
-        if(++dt.tm_hour > 23) {
-          dt.tm_hour = 0;
-        } 
+  static char buffer[80] = "\0";
+
+  if(hQueue != NULL ) {
+      if(xQueueReceive(hQueue, &dt, pdMS_TO_TICKS(10)) == pdPASS) {
+        sprintf(buffer,"Datum: %2d.%2d.%4d  Uhrzeit: %2d:%2d",
+          dt.tm_mday,dt.tm_mon,dt.tm_year,dt.tm_hour,dt.tm_min);
       }
-    }
-    t1 = t2;
   }
+  runServer(buffer);
   delay(10);
-=======
-  runServer();
->>>>>>> d1e7f6b8bdf2b16d9b13de80625e43a43c9cfad5
 }
