@@ -50,9 +50,9 @@ void analysis(void* param) {
             Serial.printf("Pmin:%d Phour:%d Pdate:%d validDCF:%d\n",p1,p2,p3,validDCF);
 #endif
             }
-            if(validDCF) {
+         //   if(validDCF) {
               xQueueSend(hQueue, &dtDCF, (TickType_t) 0);
-            }
+         //   }
 #ifdef ESP32_DEBUG            
             Serial.printf("Bit:%d P20:%d|Pm:%d Ph:%d Pd:%d",bit,frame[20],p1,p2,p3);
  #endif
