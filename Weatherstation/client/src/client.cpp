@@ -1,4 +1,6 @@
 #include <declarations.h>
+#include <TimeLib.h>
+#include <dcf77.h>
 
 const char*  ssid    = "Vodafone-CF6C";
 const char* password = "7HGZ2eGXrTFpbGLE";
@@ -26,9 +28,6 @@ bool doRequest;
 bool WiFiConnected = false;
 static bool doConnect = false;
 static bool BleConnected = false;
-
-extern bool fallingEdge;              // defined in dcf
-extern QueueHandle_t hQueue;
 
 typedef void (*func_type)(uint8_t&, uint8_t&);
 
@@ -412,7 +411,7 @@ void setup() {
   dht.setup(DHT_PIN, DHTesp::AM2302);
   xTaskCreate(request,"Request",8192,NULL,1,NULL);  
   xTaskCreate(initBLE,"initBLE",8192,NULL,1,NULL); 
-  dcfInit();
+  DCF77::Start(DCF_PIN);
   doRequest = true;         
   t1 = millis();
   t3 = t1;
@@ -420,8 +419,6 @@ void setup() {
 
 void loop() {
   static unsigned long t2;
-  static bool status = false;
-  static struct tm dtDCF;
   static func_type functions[3] = {&printTimeDate,&printWeather,&printTemperatures};
   uint8_t x;
   uint8_t y;
@@ -429,10 +426,7 @@ void loop() {
   if(doScroll) {
     drawScrollString();
   }
-  if(fallingEdge && status != fallingEdge) {
-    digitalWrite(LED, !digitalRead(LED));         // toggle LED
-  }
-  status = fallingEdge;
+  
   t2 = millis();
   if((t2 - t1)  > 995) {
     if(++dt.tm_sec > 59) {
@@ -445,12 +439,7 @@ void loop() {
         } 
       }
     }
-    if(hQueue != NULL ) {
-      if(xQueueReceive(hQueue, &dtDCF, pdMS_TO_TICKS(10)) == pdPASS) {
-        validDate = true;
-        dt = dtDCF;
-      }
-    }
+    
     u8g2.clearBuffer();
     functions[dt.tm_sec/20](x,y);
     u8g2.sendBuffer(); 
