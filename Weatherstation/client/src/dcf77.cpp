@@ -1,14 +1,6 @@
 #include <declarations.h>
+#include <TimeLib.h>
 #include <dcf77.h>
-
-uint8_t bit = 0;
-uint8_t  frame[60];
-struct tm dtDCF;
-bool minStart = false;
-bool validDCF = false;
-volatile bool fallingEdge = false; 
-unsigned long t1;
-QueueHandle_t hQueue = NULL;
 
 /**
  * Initialize parameters

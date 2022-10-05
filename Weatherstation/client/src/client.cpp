@@ -371,7 +371,9 @@ void printTemperatures(uint8_t& x, uint8_t& y) {
   if(dht.getStatus() == 0) {
     x += DIS;
     u8g2.setFont(u8g2_font_logisoso16_tf);
-    dtostrf(dht.getTemperature(), 2,0,buffer);  // int-Anteil
+    static float f = dht.getTemperature();
+    static int   c = (int)f;
+    sprintf(buffer,"%2d",c);        // int-Anteil
     u8g2.drawStr(x,y, buffer);      // Innentemperatur
   }
   else {
@@ -389,7 +391,7 @@ void printTemperatures(uint8_t& x, uint8_t& y) {
   x += u8g2.getMaxCharWidth();
   u8g2.drawStr(x,y, "C");
 
-  if(validBleChar && millis() - t3 < 150000UL)  {
+  if(validBleChar && (millis() - t3) < 150000UL)  {
     x = DIS;
     y += DIS/2;
     u8g2.setFont(u8g2_font_logisoso16_tf);
@@ -404,7 +406,7 @@ void setup() {
   Serial.begin(9600);
   delay(500);
   
-  pinMode(LED, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   WiFi.begin(ssid, password);
   u8g2.begin();
   u8g2.enableUTF8Print();
@@ -439,7 +441,10 @@ void loop() {
         } 
       }
     }
-    
+    static time_t t = DCF77::getTime();
+    if(t != 0) {
+      dt = toTmStruct(t);
+    }
     u8g2.clearBuffer();
     functions[dt.tm_sec/20](x,y);
     u8g2.sendBuffer(); 

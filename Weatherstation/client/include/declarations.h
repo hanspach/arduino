@@ -10,8 +10,9 @@
 #include <DHTesp.h>
 #include <cJSON.h>
 #include <U8g2lib.h>
-
-#define LED 2
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2
+#endif
 #define DCF_PIN 15
 #define DHT_PIN 18
 #define CLOUDY 64
