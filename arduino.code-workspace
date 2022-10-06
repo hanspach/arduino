@@ -25,6 +25,7 @@
 			"path": "Weatherstation/client"
 		},
 		{
+			"name": "miscellaneous"
 			"path": "miscellaneous"
 		}
 	],

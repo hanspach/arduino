@@ -1,6 +1,7 @@
 #include <declarations.h>
 #include <dcf77.h>
 
+
 uint8_t bit = 0;
 uint8_t  frame[60];
 struct tm dtDCF;
@@ -13,8 +14,9 @@ QueueHandle_t hQueue = NULL;
 /**
  * Initialize parameters
  */
-int DCF77::dcfPin;
-byte DCF77::pulseStart;
+int DCF77::dCF77Pin=0;
+int DCF77::dCFinterrupt=0;
+byte DCF77::pulseStart=HIGH;
 
 volatile unsigned long long DCF77::filledBuffer = 0;
 volatile bool DCF77::FilledBufferAvailable= false;
@@ -31,18 +33,28 @@ bool DCF77::Up= false;
 
 time_t DCF77::latestupdatedTime= 0;
 time_t DCF77::previousUpdatedTime= 0;
-time_t DCF77::currentTime = 0;
 time_t DCF77::processingTimestamp= 0;
 time_t DCF77::previousProcessingTimestamp=0;
 unsigned char DCF77::CEST=0;
 DCF77::ParityFlags DCF77::flags = {0,0,0,0};
 
-/**
- * Start receiving DCF77 information
- */
-void DCF77::Start(const int dCF77Pin) 
+//Cstr
+DCF77::DCF77(int DCF77Pin, int DCFinterrupt, bool OnRisingFlank) 
 {
-  	leadingEdge           = 0;
+	dCF77Pin     = DCF77Pin;
+	dCFinterrupt = DCFinterrupt;	
+	pulseStart   = OnRisingFlank ? HIGH : LOW;
+	
+	if (!initialized) {  
+		pinMode(dCF77Pin, INPUT);	
+		initialize();
+	  }
+	initialized = true;
+}
+
+void DCF77::initialize(void) 
+{	
+	leadingEdge           = 0;
 	trailingEdge          = 0;
 	PreviousLeadingEdge   = 0;
 	Up                    = false;
@@ -54,12 +66,14 @@ void DCF77::Start(const int dCF77Pin)
 	flags.parityHour      = 0;
 	flags.parityMin       = 0;
 	CEST				  = 0;
-	dcfPin				  = dCF77Pin;
-	pinMode(dcfPin, INPUT);
-	pulseStart = HIGH;
-  	attachInterrupt(dcfPin, isr, CHANGE);
-	if(xTaskCreate(DCF77::checkTime,"CheckTime",8192,NULL,1,NULL) != pdPASS)
-		Serial.println("Task creation failure");
+}
+
+/**
+ * Start receiving DCF77 information
+ */
+void DCF77::Start(void) 
+{
+	attachInterrupt(dCFinterrupt, int0handler, CHANGE);
 }
 
 /**
@@ -67,7 +81,7 @@ void DCF77::Start(const int dCF77Pin)
  */
 void DCF77::Stop(void) 
 {
-	detachInterrupt(dcfPin);	
+	detachInterrupt(dCFinterrupt);	
 }
 
 /**
@@ -82,21 +96,21 @@ inline void DCF77::bufferinit(void)
 /**
  * Interrupt handler that processes up-down flanks into pulses and stores these in the buffer
  */
-void IRAM_ATTR DCF77::isr() {
+void DCF77::int0handler() {
 	int flankTime = millis();
-	byte sensorValue = digitalRead(dcfPin);
+	byte sensorValue = digitalRead(dCF77Pin);
 
 	// If flank is detected quickly after previous flank up
 	// this will be an incorrect pulse that we shall reject
 	if ((flankTime-PreviousLeadingEdge)<DCFRejectionTime) {
-		Serial.println("rCT ");
+		Serial.println("rCT");
 		return;
 	}
 	
 	// If the detected pulse is too short it will be an
 	// incorrect pulse that we shall reject as well
 	if ((flankTime-leadingEdge)<DCFRejectPulseWidth) {
-	    Serial.println("rPW ");
+	    Serial.println("rPW");
 		return;
 	}
 	
@@ -111,7 +125,7 @@ void IRAM_ATTR DCF77::isr() {
 			// Flank down
 			trailingEdge=flankTime;
 			int difference=trailingEdge - leadingEdge;            
-      		digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));  // blinki 		
+      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));  // blinki 		
 			if ((leadingEdge-PreviousLeadingEdge) > DCFSyncTime) {
 				finalizeBuffer();
 			}         
@@ -127,7 +141,7 @@ void IRAM_ATTR DCF77::isr() {
  * Add new bit to buffer
  */
 inline void DCF77::appendSignal(unsigned char signal) {
-	Serial.print(signal, DEC); Serial.print(" ");
+	Serial.println(signal, DEC);
 	runningBuffer = runningBuffer | ((unsigned long long) signal << bufferPosition);  
 	bufferPosition++;
 	if (bufferPosition > 59) {
@@ -206,6 +220,38 @@ bool DCF77::receivedTimeUpdate(void) {
 }
 
 /**
+ * Store previous time. Needed for consistency 
+ */
+void DCF77::storePreviousTime(void) {
+	previousUpdatedTime = latestupdatedTime;
+	previousProcessingTimestamp = processingTimestamp;
+}
+
+/**
+ * Calculate the parity of the time and date. 
+ */
+void DCF77::calculateBufferParities(void) {	
+	// Calculate Parity 
+	flags.parityFlag = 0;	
+	for(int pos=0;pos<59;pos++) {
+		bool s = (processingBuffer >> pos) & 1;  
+		
+		// Update the parity bits. First: Reset when minute, hour or date starts.
+		if (pos ==  21 || pos ==  29 || pos ==  36) {
+			flags.parityFlag = 0;
+		}
+		// save the parity when the corresponding segment ends
+		if (pos ==  28) {flags.parityMin = flags.parityFlag;};
+		if (pos ==  35) {flags.parityHour = flags.parityFlag;};
+		if (pos ==  58) {flags.parityDate = flags.parityFlag;};
+		// When we received a 1, toggle the parity flag
+		if (s == 1) {
+			flags.parityFlag = flags.parityFlag ^ 1;
+		}
+	}
+}
+
+/**
  * Evaluates the information stored in the buffer. This is where the DCF77
  * signal is decoded 
  */
@@ -255,58 +301,42 @@ bool DCF77::processBuffer(void) {
 }
 
 /**
- * Calculate the parity of the time and date. 
- */
-void DCF77::calculateBufferParities(void) {	
-	// Calculate Parity 
-	flags.parityFlag = 0;	
-	for(int pos=0;pos<59;pos++) {
-		bool s = (processingBuffer >> pos) & 1;  
-		
-		// Update the parity bits. First: Reset when minute, hour or date starts.
-		if (pos ==  21 || pos ==  29 || pos ==  36) {
-			flags.parityFlag = 0;
-		}
-		// save the parity when the corresponding segment ends
-		if (pos ==  28) {flags.parityMin = flags.parityFlag;};
-		if (pos ==  35) {flags.parityHour = flags.parityFlag;};
-		if (pos ==  58) {flags.parityDate = flags.parityFlag;};
-		// When we received a 1, toggle the parity flag
-		if (s == 1) {
-			flags.parityFlag = flags.parityFlag ^ 1;
-		}
-	}
-}
-
-/**
- * Store previous time. Needed for consistency 
- */
-void DCF77::storePreviousTime(void) {
-	previousUpdatedTime = latestupdatedTime;
-	previousProcessingTimestamp = processingTimestamp;
-}
-
-void DCF77::checkTime(void*) {
-	while(1) {
-		if (!receivedTimeUpdate()) {
-			currentTime = 0;
-		} else {
-			currentTime =latestupdatedTime + (now() - processingTimestamp);
-		}
-		vTaskDelay(1000 / portTICK_PERIOD_MS);	// delay for 1s
-	}
-}
-
-/**
  * Get most recently received time 
  * Note, this only returns an time once, until the next update
  */
 time_t DCF77::getTime(void)
 {
-	return currentTime;
+	if (!receivedTimeUpdate()) {
+		return(0);
+	} else {
+		// Send out time, taking into account the difference between when the DCF time was received and the current time
+		time_t currentTime =latestupdatedTime + (now() - processingTimestamp);
+		return(currentTime);
+	}
 }
 
-//////////////////// original ////////////////////////
+/**
+ * Get most recently received time in UTC 
+ * Note, this only returns an time once, until the next update
+ */
+time_t DCF77::getUTCTime(void)
+{
+	if (!receivedTimeUpdate()) {
+		return(0);
+	} else {
+		// Send out time UTC time
+		int UTCTimeDifference = (CEST ? 2 : 1)*SECS_PER_HOUR;
+		time_t currentTime =latestupdatedTime - UTCTimeDifference + (now() - processingTimestamp);
+		return(currentTime);
+	}
+}
+
+int DCF77::getSummerTime(void) 
+{
+  return (CEST)?1:0;
+} 
+
+//////////////////////////////////////
 bool checkParity(const uint8_t von, const uint8_t bis) {
   static uint8_t sum;
   static uint8_t i;
@@ -348,9 +378,9 @@ void analysis(void* param) {
             Serial.printf("Pmin:%d Phour:%d Pdate:%d validDCF:%d\n",p1,p2,p3,validDCF);
 #endif
             }
-         //   if(validDCF) {
+            if(validDCF) {
               xQueueSend(hQueue, &dtDCF, (TickType_t) 0);
-         //   }
+            }
 #ifdef ESP32_DEBUG            
             Serial.printf("Bit:%d P20:%d|Pm:%d Ph:%d Pd:%d",bit,frame[20],p1,p2,p3);
  #endif
