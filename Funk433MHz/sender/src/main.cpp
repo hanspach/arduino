@@ -1,20 +1,15 @@
 #include <Arduino.h>
-#include <RFTransmitter.h>
+#include <HardwareSerial.h>
 
-#define NODE_ID          1
-#define OUTPUT_PIN       2
- unsigned long counter = 0;
-RFTransmitter transmitter(OUTPUT_PIN, NODE_ID);
+HardwareSerial txs(1);
 
 void setup() {
-  
+  txs.begin(2400,SERIAL_8N1,16,15);
 }
 
 void loop() {
  const char *msg = "Hello World!";
-  transmitter.send((byte *)msg, strlen(msg) + 1);
-
-  delay(5000);
-
-  transmitter.resend((byte *)msg, strlen(msg) + 1);
+  txs.flush();
+  txs.println(msg);
+  delay(1000);
 }
