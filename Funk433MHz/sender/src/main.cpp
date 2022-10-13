@@ -1,15 +1,17 @@
 #include <Arduino.h>
-#include <HardwareSerial.h>
+#include <rcswitch.h>
 
-HardwareSerial txs(1);
+RCSwitch sender = RCSwitch();
 
 void setup() {
-  txs.begin(2400,SERIAL_8N1,16,15);
+  sender.enableTransmit(17);
+  //txs.begin(2400,SERIAL_8N1,16,17);
 }
 
 void loop() {
- const char *msg = "Hello World!";
-  txs.flush();
-  txs.println(msg);
-  delay(1000);
+  for(int i=1; i < 10; i++) {
+    sender.send(i, 24);
+    delay(100);
+  }
+  delay(5000);
 }
