@@ -33,15 +33,22 @@ public:
     };
 
 private:
-    void transmit(HighLow pulses);
+    static bool  receiveProtocol(const int p, unsigned int changeCount);
+    static void  handleInterrupt();
     Protocol protocol;
-    int txPin;
-    int nRepeatTransmit;
-
+   
+    static int nReceiveTolerance;
+    volatile static unsigned long receivedValue;
+    static const unsigned int nSeparationLimit;
+     /* 
+     * timings[0] contains sync timing, followed by a number of bits
+     */
+    static unsigned int timings[RCSWITCH_MAX_CHANGES];
 public:
     RCSwitch();
-    void enableTransmit(int nTransmitterPin);
-    void send(unsigned long code, unsigned int length);
-    void send(const char* txt);
+    void enableReceive(int nReceiverPin);
+    bool available();
+    void resetAvailable();
+    unsigned long getReceivedValue();
 };
 #endif

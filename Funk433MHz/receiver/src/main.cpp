@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <rcswitch.h>
 #include <U8g2lib.h>
 #include <HardwareSerial.h>
 #include "freertos/FreeRTOS.h"
@@ -15,6 +16,7 @@
 
 
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+RCSwitch receiver = RCSwitch();
 
 static void task(void*) {
   const int uart_num = UART_NUM_1;
@@ -46,8 +48,8 @@ static void task(void*) {
 }
 
 
-HardwareSerial rxs(1);
-static char buffer[36] = "\0";
+//HardwareSerial rxs(1);
+//static char buffer[36] = "\0";
 
 
 
@@ -55,7 +57,8 @@ void setup() {
   delay(500);
  // u8g2.begin();
   Serial.begin(9600);
-  rxs.begin(1024,SERIAL_8N1,16,17);
+  receiver.enableReceive(16);
+  //rxs.begin(1024,SERIAL_8N1,16,17);
  // rxs.onReceive(received);
  // xTaskCreate(received, "received",8192,NULL,1,NULL);
 }
@@ -69,12 +72,18 @@ void loop() {
   u8g2.drawStr(0,0,msg);
   */
   //
+  /*
      Serial.print("Check UART:");
     while(rxs.available()) {
       char c = rxs.read();
       Serial.print(c);
     } 
     Serial.println();
-    delay(2000);
+    */
+    if(receiver.available()) {
+      Serial.print("Value:");
+      Serial.println(receiver.getReceivedValue());
+      receiver.resetAvailable();
+    }
   
 }

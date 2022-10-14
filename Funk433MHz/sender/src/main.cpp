@@ -1,17 +1,23 @@
 #include <Arduino.h>
 #include <rcswitch.h>
+#include "Adafruit_MCP9808.h"
 
 RCSwitch sender = RCSwitch();
+Adafruit_MCP9808 tempsensor = Adafruit_MCP9808();
 
 void setup() {
+  Serial.begin(9600);
+  delay(500);
+  tempsensor.begin(0x18);                           // default address
+  tempsensor.setResolution(1);                      // 
   sender.enableTransmit(17);
-  //txs.begin(2400,SERIAL_8N1,16,17);
+  
 }
 
 void loop() {
-  for(int i=1; i < 10; i++) {
-    sender.send(i, 24);
-    delay(100);
-  }
-  delay(5000);
+  float c = tempsensor.readTempC();
+  int i = (int)c;
+  Serial.printf("Temperatur: %d°C\n",i);
+  sender.send(i, 8);
+  delay(2000);
 }
