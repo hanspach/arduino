@@ -19,6 +19,7 @@
 int RCSwitch::nReceiveTolerance = 60;
 unsigned int RCSwitch::timings[RCSWITCH_MAX_CHANGES];
 const unsigned int RCSwitch::nSeparationLimit = 4300;
+uint8_t RCSwitch::repeatTransmit = 0;
 volatile unsigned long RCSwitch::receivedValue = 0;
 
 enum {
@@ -87,7 +88,10 @@ bool RCSwitch::receiveProtocol(const int p, unsigned int changeCount) {
     }
 
     if (changeCount > 7) {    // ignore very short transmissions: no device sends them, so this must be noise
-        receivedValue = code;
+        if(++repeatTransmit == 3) {
+          receivedValue = code;
+          repeatTransmit = 0;
+        }
         return true;
     }
 
