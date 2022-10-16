@@ -18,6 +18,6 @@ void loop() {
   float c = tempsensor.readTempC();
   int i = (int)c;
   Serial.printf("Temperatur: %d°C\n",i);
-  sender.send(i, 8);
+  sender.send(i, 24);
   delay(2000);
 }

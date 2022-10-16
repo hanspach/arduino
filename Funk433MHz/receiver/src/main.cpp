@@ -25,10 +25,11 @@ void loop() {
   u8g2.setFontPosTop();
   u8g2.drawStr(0,0,msg);
   */
-  
+ 
   if(receiver.available()) {
-    Serial.print("Value:");
-    Serial.println(receiver.getReceivedValue());
-    receiver.resetAvailable();
+      Serial.print("Value:");
+      Serial.println(receiver.getReceivedValue());
+      receiver.resetAvailable();
   }
+  delay(2000);
 }

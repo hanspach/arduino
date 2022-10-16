@@ -38,7 +38,6 @@ private:
     Protocol protocol;
    
     static int nReceiveTolerance;
-    static uint8_t repeatTransmit;
     volatile static unsigned long receivedValue;
     static const unsigned int nSeparationLimit;
      /* 
