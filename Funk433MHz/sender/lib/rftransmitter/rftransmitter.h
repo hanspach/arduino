@@ -15,7 +15,7 @@ class RFTransmitter {
     void send0();
     void send1();
     void send00();
-    void send01);
+    void send01();
     void send10();
     void send11();
     void sendByte(byte data);
@@ -30,3 +30,4 @@ public:
     void print(char *message);
     void print(unsigned int value, byte base = DEC);
 };
+#endif

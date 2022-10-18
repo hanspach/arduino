@@ -1,6 +1,12 @@
 #include <Arduino.h>
 #include "rftransmitter.h"
 
+enum {
+  MAX_PAYLOAD_SIZE = 80,
+  MIN_PACKAGE_SIZE = 4,
+  MAX_PACKAGE_SIZE = MAX_PAYLOAD_SIZE + MIN_PACKAGE_SIZE
+};
+
 static uint16_t crc_update(uint16_t crc, uint8_t data) {
 #if defined(__AVR__)
 return _crc_ccitt_update(crc, data);
@@ -139,7 +145,7 @@ void RFTransmitter::print(char *message) {
     send((byte *)message, strlen(message)); 
 }
 
-void RFTransmitter::print(unsigned int value, byte base = DEC) {
+void RFTransmitter::print(unsigned int value, byte base) {
     char printBuf[5];
     byte len = 0;
 
