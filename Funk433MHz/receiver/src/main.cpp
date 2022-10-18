@@ -1,35 +1,46 @@
 #include <Arduino.h>
+#include <HardwareSerial.h>
 #include <rcswitch.h>
-#include <U8g2lib.h>
+#include "rfreceiver.h"
 
-#define ECHO_TEST_TXD  17
-#define ECHO_TEST_RXD  16
-#define BUF_SIZE (1024)
+#define TX_PIN  17
+#define RX_PIN  16
+#define BUF_SIZE 1024
 
 
-//U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
-RCSwitch receiver = RCSwitch();
+HardwareSerial rxs = HardwareSerial(1);
+RCSwitch rxswitch = RCSwitch();
+RFReceiver receiver = RFReceiver(RX_PIN);
 
 void setup() {
   delay(500);
- // u8g2.begin();
   Serial.begin(9600);
-  receiver.enableReceive(16);
 }
 
 void loop() {
-  /*
-  u8g2.clearBuffer();
-  u8g2.enableUTF8Print();
-  u8g2.setFont(u8g2_font_logisoso16_tf);
-  u8g2.setFontPosTop();
-  u8g2.drawStr(0,0,msg);
-  */
- 
-  if(receiver.available()) {
-      Serial.print("Value:");
-      Serial.println(receiver.getReceivedValue());
-      receiver.resetAvailable();
+  static char msg[MAX_PACKAGE_SIZE];
+  byte senderId = 0;
+  byte packageId = 0;
+
+  rxswitch.enableReceive(RX_PIN);
+  if(rxswitch.available()) {
+      Serial.printf("RCSwitch-Value: %d\n",rxswitch.getReceivedValue());
+      rxswitch.resetAvailable();
   }
+  rxswitch.disableReceive(RX_PIN);
+  delay(50);
+
+  receiver.begin();
+  byte len = receiver.recvPackage((byte *)msg, &senderId, &packageId);
+  Serial.printf("RFReceiver-Value: %s\n",msg);
+  receiver.stop();
+ 
+  rxs.begin(2400,SERIAL_8N1,RX_PIN,TX_PIN);
+  delay(100);
+  if(rxs.available()) {
+    String s = rxs.readStringUntil('\n');
+    Serial.printf("Serial-Value:%s\n",s.c_str());
+  }
+  rxs.end();
   delay(2000);
 }

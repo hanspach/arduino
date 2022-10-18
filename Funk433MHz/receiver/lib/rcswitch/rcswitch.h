@@ -46,7 +46,8 @@ private:
     static unsigned int timings[RCSWITCH_MAX_CHANGES];
 public:
     RCSwitch();
-    void enableReceive(int nReceiverPin);
+    void enableReceive(uint8_t rxPin);
+    void disableReceive(uint8_t rxPin);
     bool available();
     void resetAvailable();
     unsigned long getReceivedValue();

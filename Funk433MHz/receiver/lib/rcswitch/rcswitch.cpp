@@ -29,10 +29,14 @@ RCSwitch::RCSwitch() {
   protocol = proto[0];
 }
 
-void RCSwitch::enableReceive(int receiverPin) {
+void RCSwitch::enableReceive(uint8_t receiverPin) {
   pinMode(receiverPin, INPUT_PULLUP);
   receivedValue = 0;
   attachInterrupt(receiverPin,RCSwitch::handleInterrupt,CHANGE);
+}
+
+void RCSwitch::disableReceive(uint8_t receivePin) {
+  detachInterrupt(receivePin);
 }
 
 /* helper function for the receiveProtocol method */
