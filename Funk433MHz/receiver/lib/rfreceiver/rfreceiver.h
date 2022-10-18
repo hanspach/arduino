@@ -30,7 +30,6 @@ class RFReceiver {
     
     static byte recoverByte(const byte b1, const byte b2, const byte b3);
     static uint16_t crc_update(uint16_t crc, uint8_t data);
-    byte RFReceiver::recvDataRaw(byte * data);
     byte recvDataRaw(byte * data);
     static void decodeByte(byte inputByte);
     static void handleInterrupt();

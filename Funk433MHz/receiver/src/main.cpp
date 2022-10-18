@@ -29,7 +29,7 @@ void loop() {
   }
   rxswitch.disableReceive(RX_PIN);
   delay(50);
-
+/*
   receiver.begin();
   byte len = receiver.recvPackage((byte *)msg, &senderId, &packageId);
   Serial.printf("RFReceiver-Value: %s\n",msg);
@@ -42,5 +42,6 @@ void loop() {
     Serial.printf("Serial-Value:%s\n",s.c_str());
   }
   rxs.end();
+  */
   delay(2000);
 }
