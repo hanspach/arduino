@@ -26,18 +26,22 @@ void loop() {
   float c = tempsensor.readTempC();
   int i = (int)c;
   sprintf(buffer,"Es sind %d°C\n",i);
+
+  /*
   Serial.printf("RCSwitch sends: %d°C\n",i);
   sender.send(i, 24);
   delay(100);
-
+  */
   trans.send((byte*)buffer,strlen(buffer)+1);
   Serial.printf("RFTransmitter sends: %d°C\n",i);
-  delay(100);
   
+  
+  /*
   txs.begin(2400,SERIAL_8N1,RX_PIN,TX_PIN);
   delay(100);
   txs.println(buffer);
   Serial.printf("Serial sends:%s\n",buffer);
   txs.end();
+  */
   delay(2000);
 }
