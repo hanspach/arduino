@@ -4,6 +4,7 @@
 // Number of maximum high/Low changes per packet.
 // We can handle up to (unsigned long) => 32 bit * 2 H/L changes per bit + 2 for sync
 #define RCSWITCH_MAX_CHANGES 67
+#define BUFLEN 80
 
 class RCSwitch {
 public:
@@ -33,23 +34,35 @@ public:
     };
 
 private:
-    static bool  receiveProtocol(const int p, unsigned int changeCount);
-    static void  handleInterrupt();
+    void transmit(HighLow pulses);
+    static bool IRAM_ATTR receiveProtocol(const int p, unsigned int changeCount);
+    static void IRAM_ATTR handleInterrupt();
     Protocol protocol;
-   
+    uint8_t rxPin;
+    uint8_t txPin;
+    int nRepeatTransmit;
+
     static int nReceiveTolerance;
-    volatile static unsigned long receivedValue;
-    static const unsigned int nSeparationLimit;
-     /* 
-     * timings[0] contains sync timing, followed by a number of bits
-     */
+    static char* pBuf;
+    volatile static unsigned long nReceivedValue;
+    volatile static unsigned int nReceivedBitlength;
+    volatile static unsigned int nReceivedDelay;
+    volatile static unsigned int nReceivedProtocol;
+    const static unsigned int nSeparationLimit;
+    static portMUX_TYPE mux;
     static unsigned int timings[RCSWITCH_MAX_CHANGES];
 public:
     RCSwitch();
-    void enableReceive(uint8_t rxPin);
-    void disableReceive(uint8_t rxPin);
+    void enableTransmit(int nTransmitterPin);
+    void enableReceive(int nReceiverPin);
+    void disableTransmit();
+    void disableReceive();
     bool available();
     void resetAvailable();
+    void send(unsigned long code, unsigned int length = 24);
+    void send(const char* txt);
     unsigned long getReceivedValue();
+    char* getReceivedString();
+    void resetString();
 };
 #endif
