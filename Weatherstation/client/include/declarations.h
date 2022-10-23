@@ -23,7 +23,7 @@
 #define RAINY 67
 #define STARRY 68
 #define SUNNY 69
-//#define ESP32_DEBUG   // for dubug purpose
+#define ESP32_DEBUG   // for dubug purpose
 
 struct weather_data {
   int humidity;

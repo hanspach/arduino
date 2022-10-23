@@ -131,7 +131,7 @@ bool connectToBleServer() {
   #ifdef ESP32_DEBUG
       Serial.print("The characteristic value was: ");
       Serial.println(outsideTemp.c_str());
-      printDiffTime():
+      printDiffTime();
   #endif
       validBleChar = true;
   }
