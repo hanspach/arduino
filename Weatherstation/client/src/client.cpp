@@ -39,6 +39,7 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
     // We have found a device, let us now see if it contains the service we are looking for.
     if (advertisedDevice.haveServiceUUID() && advertisedDevice.isAdvertisingService(serviceUUID)) {
 #ifdef ESP32_DEBUG      
+      Serial.print("From MyAdvertisedCallback::onResult:");
       Serial.println(advertisedDevice.toString().c_str());
 #endif
       BLEDevice::getScan()->stop();
@@ -72,7 +73,7 @@ void printDiffTime() {
     diff /= 1000; // in sec
     Serial.print("Verstrichene Zeit:");
     if(diff > 59) {
-      Serial.print(diff/60);
+      Serial.print((int)diff/60);
       Serial.print("m:");
     }
     Serial.print(diff%60);
