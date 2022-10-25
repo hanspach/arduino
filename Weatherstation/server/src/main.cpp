@@ -13,27 +13,15 @@ Adafruit_MCP9808 tempsensor = Adafruit_MCP9808();
 char txtVal[10] = "\0";
 BLEServer* pServer = NULL;
 BLECharacteristic* pCharacteristic;
-static RTC_DATA_ATTR unsigned long prevTime = 0;
-
-void printDiffTime(unsigned long diffTime) {
-   
-    diffTime /= 1000; // in sec
-    Serial.print("Verstrichene Zeit:");
-    if(diffTime > 59) {
-      Serial.print((int)diffTime/60);
-      Serial.print("m:");
-    }
-    Serial.print(diffTime%60);
-    Serial.println("s");
-   
-}
+RTC_DATA_ATTR unsigned int count = 1;
 
 void setup() {
-   pinMode(LED_BUILTIN, OUTPUT);
-   delay(500);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
   Serial.begin(9600);
   esp_sleep_enable_timer_wakeup(1000000ULL * 60);
-  Serial.println("Setup started!");
+  Serial.print("Setup started: ");
   tempsensor.begin(0x18);                           // default address
   tempsensor.setResolution(1);                      //
   
@@ -62,10 +50,8 @@ void setup() {
   pCharacteristic->notify();
   vTaskDelay(2000 / portTICK_PERIOD_MS);            // enough time to send data
   tempsensor.shutdown_wake(1);
-  unsigned long nextTime = millis();
-  Serial.printf("BLE sends: %s°C\n",txtVal);
-  printDiffTime(nextTime-prevTime);
-  prevTime = nextTime;
+  Serial.printf("BLE sends %s°C for %d times.\n",txtVal,count);
+  ++count;
   BLEDevice::deinit();
   while(BLEDevice::getInitialized()) {              // disable BLE
     vTaskDelay(10 / portTICK_PERIOD_MS);
