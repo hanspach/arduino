@@ -73,7 +73,7 @@ void printDiffTime() {
     diff /= 1000; // in sec
     Serial.print("Verstrichene Zeit:");
     if(diff > 59) {
-      Serial.print((int)diff/60);
+      Serial.print((int)(diff/60));
       Serial.print("m:");
     }
     Serial.print(diff%60);
@@ -107,7 +107,12 @@ static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
 bool connectToBleServer() {
   BLEClient*  pClient  = BLEDevice::createClient();
   pClient->setClientCallbacks(new MyClientCallback());
-  pClient->connect(myDevice);  // if you pass BLEAdvertisedDevice instead of address, it will be recognized type of peer device address (public or private)
+  if(pClient->connect(myDevice)) {  // if you pass BLEAdvertisedDevice instead of address, it will be recognized type of peer device address (public or private)
+#ifdef ESP32_DEBUG
+  Serial.println(" - Connected to server");
+#endif
+  }
+  
   BLERemoteService* pRemoteService = pClient->getService(serviceUUID);
   if(pRemoteService == nullptr) {
 #ifdef ESP32_DEBUG
@@ -117,6 +122,11 @@ bool connectToBleServer() {
     pClient->disconnect();
     return false;
   }
+#ifdef ESP32_DEBUG
+  Serial.println(" - Found our service");
+#endif
+
+  // Obtain a reference to the characteristic in the service of the remote BLE server.
   pRemoteCharacteristic = pRemoteService->getCharacteristic(charUUID);
   if (pRemoteCharacteristic == nullptr) {
 #ifdef ESP32_DEBUG
@@ -126,7 +136,10 @@ bool connectToBleServer() {
     pClient->disconnect();
     return false;
   }
-  
+#ifdef ESP32_DEBUG
+  Serial.println(" - Found our characteristic");
+#endif
+
   if(pRemoteCharacteristic->canRead()) {
       outsideTemp = pRemoteCharacteristic->readValue();
   #ifdef ESP32_DEBUG
@@ -181,8 +194,9 @@ void initBLE(void* param) {
     if(doConnect) {
       connectToBleServer();
       doConnect = false;
-      delay(12000UL);
+      //delay(12000UL);
     }
+    pBLEScan->clearResults();   // delete results fromBLEScan buffer to release memory
     delay(2000);
   }
 }

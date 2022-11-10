@@ -11,20 +11,9 @@
 
 Adafruit_MCP9808 tempsensor = Adafruit_MCP9808();
 char txtVal[10] = "\0";
-bool deviceConnected = false;
 BLEServer* pServer = NULL;
 BLECharacteristic* pCharacteristic;
 //RTC_DATA_ATTR unsigned int count = 1;
-
-class MyServerCallbacks: public BLEServerCallbacks {
-	void onConnect(BLEServer* pServer) {
-	  deviceConnected = true;
-	}
-	
-    void onDisconnect(BLEServer* pServer) {
-      deviceConnected = false;
-    }
-};
 
 void setup() {
   //pinMode(LED_BUILTIN, OUTPUT);
@@ -43,8 +32,7 @@ void setup() {
   pServer = BLEDevice::createServer();              // Create the BLE Server
   BLEService* pService = pServer->createService(SERVICE_UUID);  // Create the BLE Service
   pCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID,
-  BLECharacteristic::PROPERTY_READ|BLECharacteristic::PROPERTY_WRITE|
-	BLECharacteristic::PROPERTY_NOTIFY|BLECharacteristic::PROPERTY_INDICATE);
+  BLECharacteristic::PROPERTY_READ|BLECharacteristic::PROPERTY_WRITE|BLECharacteristic::PROPERTY_NOTIFY);
   pCharacteristic->addDescriptor(new BLE2902());
   pService->start();                               // Start the service
   BLEAdvertising* pAdvertising = pServer->getAdvertising();
@@ -53,18 +41,17 @@ void setup() {
   pAdvertising->setMinPreferred(0x06);
   pAdvertising->setMinPreferred(0x12);
   BLEDevice::startAdvertising();
-  if(deviceConnected) {
-	  tempsensor.wake();                                // wake up, ready to read!
-	  float f = tempsensor.readTempC();
-	  int c = (int)f;                                  // round value
-	  sprintf(txtVal,"%2d", c);
-	  pCharacteristic->setValue(txtVal);
-	  pCharacteristic->notify();
-	  delay(500);                                    // enough time to send data
-	  tempsensor.shutdown_wake(1);
-	  //Serial.printf("BLE sends %s°C for %d times.\n",txtVal,count);
-	  //++count;
-  }
+  
+  tempsensor.wake();                                // wake up, ready to read!
+  float f = tempsensor.readTempC();
+  int c = (int)f;                                  // round value
+  sprintf(txtVal,"%2d", c);
+  pCharacteristic->setValue(txtVal);
+  pCharacteristic->notify();
+  delay(2000);                                    // enough time to send data
+  tempsensor.shutdown_wake(1);
+  //Serial.printf("BLE sends %s°C for %d times.\n",txtVal,count);
+  //++count;
   BLEDevice::deinit();
   while(BLEDevice::getInitialized()) {              // disable BLE
     delay(10);
