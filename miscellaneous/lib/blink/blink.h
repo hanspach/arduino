@@ -5,6 +5,6 @@
     #define LED_BUILTIN 2
 #endif
 
-void turnLEDon(int);
-void turnLEDoff(int);
+void turnLEDon(int bit = LED_BUILTIN);
+void turnLEDoff(int bit = LED_BUILTIN);
 #endif
