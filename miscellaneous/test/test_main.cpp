@@ -1,5 +1,5 @@
 #include <unity.h>
-#include <header.h>
+#include <blink.h>
 
 void setUp(void)
 {
