@@ -1,4 +1,5 @@
 #include <blink.h>
+#include <uisensor.h>
 
 int status;
 
@@ -14,11 +15,18 @@ void turnLedOnOff() {
 }
 
 void setup() {
-  delay(1000);
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(9600);
+  if(!Serial) {
+      Serial.begin(9600);
+      while (!Serial) {
+          delay(1);
+      }
+  }
+  initIna();
+  initPWM();
 }
 
 void loop() {
-  turnLedOnOff();
+  measureIna();
+  performPWM();
+  delay(1000);
 }
