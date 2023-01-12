@@ -22,11 +22,11 @@ void setup() {
       }
   }
   initIna();
-  initPWM();
+ // initPWM();
 }
 
 void loop() {
   measureIna();
-  performPWM();
+//  performPWM();
   delay(1000);
 }
