@@ -1,5 +1,5 @@
 #include <blink.h>
-#include <uisensor.h>
+
 
 int status;
 
@@ -21,12 +21,10 @@ void setup() {
           delay(1);
       }
   }
-  initIna();
- // initPWM();
+ 
 }
 
 void loop() {
-  measureIna();
-//  performPWM();
+ 
   delay(1000);
 }

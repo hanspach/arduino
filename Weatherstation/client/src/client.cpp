@@ -88,13 +88,14 @@ void printDiffTime() {
 static void notifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
   uint8_t* pData,size_t length, bool isNotify) {
   t4 = millis();
+  outsideTemp = (char*)pData;
 #ifdef ESP32_DEBUG  
     Serial.print(pBLERemoteCharacteristic->getUUID().toString().c_str());
-    Serial.println((char*)pData);
+    Serial.println(outsideTemp.c_str());
     printDiffTime();
 #endif
     t3 = t4;
-    outsideTemp = (char*)pData;
+    //outsideTemp = (char*)pData;
     validBleChar = true;
 }
 
