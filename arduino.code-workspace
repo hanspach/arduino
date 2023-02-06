@@ -25,7 +25,11 @@
 			"path": "Weatherstation/client"
 		},
 		{
-			"name": "miscellaneous"
+			"name": "uisensor",
+			"path": "uisensor"
+		},
+		{
+			"name": "miscellaneous",
 			"path": "miscellaneous"
 		}
 	],
