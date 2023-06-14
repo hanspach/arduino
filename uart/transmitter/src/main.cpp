@@ -18,7 +18,11 @@ void setup() {
 void loop() {
   static int count = 1; 
 
-  Serial2.write(count);
+  if(Serial2.availableForWrite()) {
+    Serial2.write(count);
+    Serial.printf("%d ",count);
+    ++count;
+  }
   delay(1000);
 
 }
