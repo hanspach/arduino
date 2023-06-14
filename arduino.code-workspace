@@ -31,6 +31,10 @@
 		{
 			"name": "miscellaneous",
 			"path": "miscellaneous"
+		},
+		{
+			"name": "uart/transmitter",
+			"path": "uart/transmitter"
 		}
 	],
 	"settings": {}
