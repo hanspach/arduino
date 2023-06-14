@@ -35,6 +35,10 @@
 		{
 			"name": "uart/transmitter",
 			"path": "uart/transmitter"
+		},
+		{
+			"name": "uart/receiver",
+			"path": "uart/receiver"
 		}
 	],
 	"settings": {}
