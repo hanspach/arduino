@@ -11,7 +11,7 @@ Adafruit_MCP9808 tempsensor = Adafruit_MCP9808();
 void setup() {
   Serial.begin(9600);
   delay(500);
-  tempsensor .begin(0x18);                           // default address
+  tempsensor.begin(0x18);                           // default address
   tempsensor.setResolution(1);                      // 
   sender.enableTransmit(TX_PIN);
 }
