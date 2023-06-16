@@ -4,6 +4,7 @@
 #include <HardwareSerial.h>
 #define TXD_PIN 17
 #define RXD_PIN 16
+#define _DEBUG_
 
 const uint8_t BUS = 4;
 OneWire oneWire(BUS);
@@ -24,22 +25,20 @@ void setup() {
     while(1);
   }
   sensor.begin();
-  if(!sensor.isConnected(&BUS)) {
-#ifdef _DEBUG_
-    Serial.println("Can't init DS1820");
-#endif
-    while(1);
-  }
 }
 
 void loop() {
-  static int count = 1; 
+ char buffer[36] = "\0";
 
-  if(Serial2.availableForWrite()) {
-    Serial2.write(count);
-    Serial.printf("%d ",count);
-    ++count;
+ if(Serial2.availableForWrite()) {
+    sensor.requestTemperatures();
+    float celsius = sensor.getTempCByIndex(0);
+    int c = (int)celsius;
+    sprintf(buffer,"T:%d C\n",c);
+    Serial2.write(buffer);
+#ifdef _DEBUG_
+    Serial.printf("%d °C ",c);
+#endif
   }
   delay(1000);
-
 }
