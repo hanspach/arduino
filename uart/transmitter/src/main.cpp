@@ -34,10 +34,10 @@ void loop() {
     sensor.requestTemperatures();
     float celsius = sensor.getTempCByIndex(0);
     int c = (int)celsius;
-    sprintf(buffer,"T:%d C\n",c);
-    Serial2.write(buffer);
+    sprintf(buffer,"2%d",c);
+    Serial2.write(buffer,strlen(buffer));
 #ifdef _DEBUG_
-    Serial.printf("%d °C ",c);
+    Serial.printf("T:%d °C ",c);
 #endif
   }
   delay(1000);
