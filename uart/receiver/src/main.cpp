@@ -2,7 +2,7 @@
 #include <HardwareSerial.h>
 
 #define UART 2
-#define DATA_SIZE 2
+#define DATA_SIZE 3
 #define TXD_PIN 17
 #define RXD_PIN 16
 #define USE_INTERNAL_PIN_LOOPBACK 1
@@ -13,7 +13,9 @@ void cbfReceive(void) {
   int bytes = ser.available();
   Serial.printf("%d: ",bytes);
   while(bytes--) {
-    Serial.print((char)ser.read());
+    char c = (char)ser.read();
+    if(c) 
+      Serial.print(c);
   }
   Serial.print(", ");
 }
