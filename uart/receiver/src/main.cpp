@@ -25,10 +25,7 @@ void setup() {
   while(!Serial);
 
   ser.begin(9600,SERIAL_8N1,RXD_PIN,TXD_PIN);
-#if USE_INTERNAL_PIN_LOOPBACK
-  uart_internal_loopback(UART, RXD_PIN);
-#endif
-  Serial.flush();
+Serial.flush();
   ser.setRxFIFOFull(DATA_SIZE);
   ser.onReceive(cbfReceive);
 }
