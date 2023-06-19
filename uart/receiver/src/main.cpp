@@ -7,7 +7,7 @@
 #define RXD_PIN 16
 #define USE_INTERNAL_PIN_LOOPBACK 1
 
-HardwareSerial ser(2);
+HardwareSerial ser(UART);
 
 void cbfReceive(void) {
   int bytes = ser.available();
