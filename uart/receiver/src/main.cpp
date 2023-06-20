@@ -5,7 +5,6 @@
 #define DATA_SIZE 3
 #define TXD_PIN 17
 #define RXD_PIN 16
-#define USE_INTERNAL_PIN_LOOPBACK 1
 
 HardwareSerial ser(UART);
 
@@ -25,8 +24,8 @@ void setup() {
   while(!Serial);
 
   ser.begin(9600,SERIAL_8N1,RXD_PIN,TXD_PIN);
-Serial.flush();
   ser.setRxFIFOFull(DATA_SIZE);
+  ser.setRxTimeout(3);
   ser.onReceive(cbfReceive);
 }
 
