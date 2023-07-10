@@ -10,6 +10,7 @@
 
 const uint8_t BUS = 4;
 const char* DAYS[] = {"","Mo","Di","Mi","Do","Fr","Sa","So"};
+char buffer[36] = "\0";
 OneWire oneWire(BUS);
 DallasTemperature sensor(&oneWire);
 
@@ -29,31 +30,27 @@ void setup() {
 #endif
     while(1);
   }
-
   sensor.begin();
 }
 
 void loop() {
-  char buffer[36] = "\0";
-
-  if(Serial2.availableForWrite()) {
-    sensor.requestTemperatures();
-    float celsius = sensor.getTempCByIndex(0);
-    int c = (int)celsius;
-    time_t t = DCF77::getTime();
-    if(t) {
-      tm dt = toTmStruct(t);
-      if(dt.tm_wday > 0 && dt.tm_wday <= 7) 
-      sprintf(buffer,"%s, %d.%d.%d %d:%d-%d",DAYS[dt.tm_wday],dt.tm_mday,dt.tm_mon,dt.tm_year,dt.tm_hour,dt.tm_min,c);
-    else
-      sprintf(buffer,"%d.%d.%d %d:%d-%d",dt.tm_mday,dt.tm_mon,dt.tm_year,dt.tm_hour,dt.tm_min,c);
-    } else {
-      sprintf(buffer,"2%d",c);
-    }
-    Serial2.write(buffer,strlen(buffer));
-#ifdef _DEBUG_
-    Serial.printf("%s ",buffer);
-#endif
+  sensor.requestTemperatures();
+  float celsius = sensor.getTempCByIndex(0);
+  int c = (int)celsius;
+  uint8_t wota = 1;
+  time_t t = DCF77::getTime();
+  if(t) {
+    tm dt = toTmStruct(t);
+    if(dt.tm_wday > 0 && dt.tm_wday <= 7) 
+      wota = dt.tm_wday;
+    sprintf(buffer,"%s, %d.%d.%d %d:%d-%d",DAYS[wota],dt.tm_mday,dt.tm_mon,dt.tm_year,dt.tm_hour,dt.tm_min,c);
+    
+  } else {
+    sprintf(buffer,"2%d",c);
   }
-  delay(1000);
+  Serial.printf("%s ",buffer);
+  if(Serial2.availableForWrite()) {
+    Serial2.write(buffer,strlen(buffer));
+  }
+  delay(5000);
 }
