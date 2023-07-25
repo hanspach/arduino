@@ -6,6 +6,9 @@
 #define TXD_PIN 17
 #define RXD_PIN 16
 #define DCF_PIN 12
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2
+#endif
 #define _DEBUG_
 
 const uint8_t BUS = 4;
@@ -23,7 +26,7 @@ void setup() {
 #endif
   
   DCF77::Start(DCF_PIN);
-  Serial2.begin(9600,SERIAL_8N1,RXD_PIN, TXD_PIN);
+  //Serial2.begin(9600,SERIAL_8N1,RXD_PIN, TXD_PIN);
   if(!Serial2) {
 #ifdef _DEBUG_
     Serial.println("Can't init Serial2");
@@ -49,8 +52,9 @@ void loop() {
     sprintf(buffer,"2%d",c);
   }
   Serial.printf("%s ",buffer);
+  /*
   if(Serial2.availableForWrite()) {
     Serial2.write(buffer,strlen(buffer));
-  }
+  } */
   delay(5000);
 }
