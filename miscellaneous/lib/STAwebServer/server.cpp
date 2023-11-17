@@ -1,9 +1,9 @@
 #include <WiFi.h>
 #include <WebServer.h>
-#include <declarations.h>
+#include "server.h"
 
-const char*  ssid    = "Vodafone-CF6C";
-const char* pwd = "7HGZ2eGXrTFpbGLE";
+const char*  ssid    = "[your ssid]";
+const char* pwd = "[your password]";
 const char* msg;
 bool LEDstatus;
 WebServer server(80);

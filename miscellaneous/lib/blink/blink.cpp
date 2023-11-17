@@ -7,3 +7,12 @@ void turnLEDon(int port) {
 void turnLEDoff(int port) {
     digitalWrite(port, LOW);
 }
+
+void turnLedOnOff() {
+  delay(1000);
+  turnLEDon();
+  Serial.println("Die LED ist an.");
+  delay(1000);
+  turnLEDoff();
+  Serial.println("Die LED ist aus.");
+}

@@ -7,4 +7,5 @@
 
 void turnLEDon(int bit = LED_BUILTIN);
 void turnLEDoff(int bit = LED_BUILTIN);
+void turnLedOnOff();
 #endif

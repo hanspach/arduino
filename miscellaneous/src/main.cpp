@@ -1,30 +1,21 @@
-#include <blink.h>
+#include <Arduino.h>
+#include "server.h"
 
+// STA_Webserver
+// in the file 'server.cpp' adapt ssid & pwd to your router
+// start Serial Monitor, run the programme
+// copy the IP into the browser prompt e.g. http://192.168.0.23/
+// switch LED on/off http://192.168.0.23/ledon http://192.168.0.23/ledoff
 
-int status;
-
-void turnLedOnOff() {
-  delay(1000);
-  turnLEDon();
-  status = 1;
-  Serial.println("Die LED ist an.");
-  delay(1000);
-  turnLEDoff();
-  status = 0;
-  Serial.println("Die LED ist aus.");
-}
 
 void setup() {
-  if(!Serial) {
-      Serial.begin(9600);
-      while (!Serial) {
-          delay(1);
-      }
-  }
- 
+  Serial.begin(9600);
+  while (!Serial) { delay(1); }
+  
+  setupServer();
 }
 
 void loop() {
- 
-  delay(1000);
+  runServer("Switch LED on/off via browser");
+  
 }
