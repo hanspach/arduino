@@ -8,7 +8,7 @@
 #include <BLEAdvertisedDevice.h>
 #include "U8g2lib.h"
 #include "DHTesp.h"
-// #define _DEBUG_ no Serial.print
+#define _DEBUG_ no Serial.print
 #define DHT_PIN 10  // Pin 18 ESP32
 #define MOTION_PIN 9
 #define CLOUDY 64
