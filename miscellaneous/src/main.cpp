@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "blink.h"
 #include "server.h"
 #include "i2cScan.h"
 #include "temperaturesensors.h"
@@ -17,12 +18,13 @@ void setup() {
   while (!Serial) { delay(1); }
   
   //setupServer();
-  initSensors();
+  //initSensors();
 }
 
 void loop() {
   ///runServer("Switch LED on/off via browser");
   //runScanner();
-  runSensors();
-  delay(5000);
+  //runSensors();
+  turnLedOnOff();
+  //delay(5000);
 }
