@@ -1,12 +1,12 @@
 {
 	"folders": [
 		{
-			"name": "i2cScan",
-			"path": "i2cScan"
+			"name": "Weatherstation/server",
+			"path": "Weatherstation/server"
 		},
 		{
-			"name": "temperature",
-			"path": "temperature"
+			"name": "Weatherstation/client",
+			"path": "Weatherstation/client"
 		},
 		{
 			"name": "Funk433MHz/sender",
@@ -15,14 +15,6 @@
 		{
 			"name": "Funk433MHz/receiver",
 			"path": "Funk433MHz/receiver"
-		},
-		{
-			"name": "Weatherstation/server",
-			"path": "Weatherstation/server"
-		},
-		{
-			"name": "Weatherstation/client",
-			"path": "Weatherstation/client"
 		},
 		{
 			"name": "uisensor",
