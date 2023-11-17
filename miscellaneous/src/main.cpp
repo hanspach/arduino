@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include "server.h"
+#include "i2cScan.h"
+
 
 // STA_Webserver
 // in the file 'server.cpp' adapt ssid & pwd to your router
@@ -12,10 +14,11 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) { delay(1); }
   
-  setupServer();
+  //setupServer();
 }
 
 void loop() {
-  runServer("Switch LED on/off via browser");
-  
+  ///runServer("Switch LED on/off via browser");
+  runScanner();
+  delay(5000);
 }

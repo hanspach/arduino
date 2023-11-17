@@ -1,15 +1,8 @@
 #include <Arduino.h>
-#include <Wire.h>
+#include "i2cScan.h"
 
-void setup() {
-   Wire.begin(); //
-  Serial.begin(9600);
-  while (!Serial);             // Leonardo: wait for serial monitor
-  Serial.println("\nI2C Scanner");
-}
-
-void loop() {
-  byte error, address;
+void runScanner() {
+     byte error, address;
   int nDevices;
 
   Serial.println("Scanning...");
@@ -46,6 +39,4 @@ void loop() {
   else
     Serial.println("done\n");
  
-  delay(5000);           // wait 5 seconds for next scan
-
 }
