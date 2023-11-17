@@ -8,7 +8,7 @@
 #include <BLEAdvertisedDevice.h>
 #include "U8g2lib.h"
 #include "DHTesp.h"
-#define _DEBUG_ no Serial.print
+// #define _DEBUG_ no Serial.print
 #define DHT_PIN 10  // Pin 18 ESP32
 #define MOTION_PIN 9
 #define CLOUDY 64
@@ -71,6 +71,7 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 DHTesp dht;
 hw_timer_t *tim0 = nullptr;
 uint8_t displayEnable;
+uint16_t u = 0;
 uint16_t percent = 0;
 int outSideTemp = 0;
 int inSideTemp = 0;
@@ -139,24 +140,22 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
                 uint8_t* p = payLoad + 2;
                 uint32_t count = p[4] + (p[5] << 8) + (p[6] << 16) + (p[7] << 24);
                 if(callCounter != count) {
-                    uint16_t volt = p[0] + (p[1] << 8);
-                    uint16_t temp = p[2] + (p[3] << 8);
-                    uint32_t time = p[8] + (p[9] << 8) + (p[10] << 16) + (p[11] << 24);
+                    portENTER_CRITICAL(&mux);
+                    u = p[0] + (p[1] << 8);
+                    outSideTemp  = p[2] + (p[3] << 8);
+                    validOutTemp = true;
+                    t1 = millis();
+                    portEXIT_CRITICAL(&mux);
                     callCounter = count;
                     for(uint8_t i= 0; i < 6; i++) {
-                        if(volt >  tab[i].mv) {     // get charge level
+                        if(u >  tab[i].mv) {     // get charge level
                             percent = tab[i].pc;    // from the table
                             break;
                         }
                     }
-                    portENTER_CRITICAL(&mux);
-                        outSideTemp = (int)temp;
-                        validOutTemp = true;
-                        t1 = millis();
-                    portEXIT_CRITICAL(&mux);
-#ifdef _DBUG_                    
-                    Serial.printf("U:%d T:%d Count:%d Time:%s\n",volt,outSideTemp,count,millisToTimeString(time).c_str());
-#endif
+#ifdef _DEBUG_                    
+                    Serial.printf("U:%dmV Procent:%d Temp:%d°C\n",u,percent,outSideTemp);
+#endif      
                 }
             }
         }
