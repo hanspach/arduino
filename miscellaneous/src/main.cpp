@@ -17,14 +17,15 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) { delay(1); }
   
-  //setupServer();
+  //initBlinking();
+  setupServer();
   //initSensors();
 }
 
 void loop() {
-  ///runServer("Switch LED on/off via browser");
+  runServer("Switch LED on/off via browser");
   //runScanner();
   //runSensors();
-  turnLedOnOff();
+  //turnLedOnOff();
   //delay(5000);
 }

@@ -5,6 +5,7 @@
     #define LED_BUILTIN 2
 #endif
 
+void initBlinking(const int PORT = LED_BUILTIN);
 void turnLEDon(int bit = LED_BUILTIN);
 void turnLEDoff(int bit = LED_BUILTIN);
 void turnLedOnOff();

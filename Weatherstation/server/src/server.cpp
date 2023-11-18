@@ -44,7 +44,7 @@ void setup() {
   sensor.setResolution(1);
   Bluefruit.begin();
   Bluefruit.autoConnLed(false); // off Blue LED for lowest power consumption
-  Bluefruit.setTxPower(0);    // Check bluefruit.h for supported values 
+  Bluefruit.setTxPower(8);    // 8=max power, Check bluefruit.h for supported values 
 }
 
 void loop() {

@@ -1,5 +1,9 @@
 #include <blink.h>
 
+void initBlinking(const int PORT) {
+  pinMode(PORT, OUTPUT);
+}
+
 void turnLEDon(int port) {
     digitalWrite(port, HIGH);
 }

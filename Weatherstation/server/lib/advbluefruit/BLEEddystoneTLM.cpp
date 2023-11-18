@@ -7,8 +7,8 @@ BLEEddystoneTLM::BLEEddystoneTLM() {
 	uuid = 0xFEAA;
 	m_data.frameType = 0x20;
 	m_data.version = 0;
-    m_data.advCount = ++BLEEddystoneTLM::count;
-    m_data.tmil = millis();
+  m_data.advCount = ++BLEEddystoneTLM::count;
+  m_data.tmil = millis();
 } // BLEEddystoneTLM
 
 bool BLEEddystoneTLM::start(void) {

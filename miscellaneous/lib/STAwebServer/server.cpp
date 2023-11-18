@@ -1,9 +1,10 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include "server.h"
+#include "privatedata.h"
 
-const char*  ssid    = "[your ssid]";
-const char* pwd = "[your password]";
+const char*  ssid = SSID;   // replace with your SSID
+const char* pwd = PWD;      // replace with your password
 const char* msg;
 bool LEDstatus;
 WebServer server(80);
@@ -62,6 +63,7 @@ void handle_NotFound(){
 }
 
 void setupServer() {
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial.print("Connecting to ");
   Serial.println(ssid);
 

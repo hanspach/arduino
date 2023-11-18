@@ -8,6 +8,7 @@
 #include <BLEAdvertisedDevice.h>
 #include "U8g2lib.h"
 #include "DHTesp.h"
+#include "privatedata.h"
 // #define _DEBUG_ no Serial.print
 #define DHT_PIN 10  // Pin 18 ESP32
 #define MOTION_PIN 9
@@ -22,10 +23,10 @@
 #define PERCENT 37
 #define ESP32_DEBUG   // for dubug purpose
 
-const char*  ssid    = "Vodafone-CF6C";
-const char* password = "7HGZ2eGXrTFpbGLE";
-const char* addr = "http://api.openweathermap.org/data/2.5/weather?q=Dresden,DE&lang=de&APPID=41be67d28f623524876fb85fdc8f5cb3";
-const String sPrefix("4c0002154d6fc88bbe756698da486866a36ec78e");
+const char*  ssid    = SSID;                                            // replace with your SSID
+const char* password = PWD;                                             // replace with your password
+const String addr = "http://api.openweathermap.org/data/2.5/weather?q=Dresden,DE&lang=de&APPID=" 
+ + String(APPID);                   // replace with your API-KEY, please see https://openweathermap.org
 const int scanTime = 5; //In seconds
 
 struct weather_data {
@@ -139,6 +140,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
             if (*payLoad == 0x20) {
                 uint8_t* p = payLoad + 2;
                 uint32_t count = p[4] + (p[5] << 8) + (p[6] << 16) + (p[7] << 24);
+                uint32_t time  = p[8] + (p[9] << 8) + (p[10]<< 16) + (p[11] << 24);                     // not yet evalueted
                 if(callCounter != count) {
                     portENTER_CRITICAL(&mux);
                     u = p[0] + (p[1] << 8);
