@@ -3,7 +3,7 @@
 #include "server.h"
 #include "i2cScan.h"
 #include "temperaturesensors.h"
-
+#include "dcf_main.h"
 
 // STA_Webserver
 // in the file 'server.cpp' adapt ssid & pwd to your router
@@ -18,14 +18,16 @@ void setup() {
   while (!Serial) { delay(1); }
   
   //initBlinking();
-  setupServer();
+  //setupServer();
   //initSensors();
+  dcfInitialising();
 }
 
 void loop() {
-  runServer("Switch LED on/off via browser");
+  //runServer("Switch LED on/off via browser");
   //runScanner();
   //runSensors();
   //turnLedOnOff();
-  //delay(5000);
+  dcfRun();
+  delay(1000);
 }
