@@ -71,7 +71,7 @@ static char buffer[36];
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 DHTesp dht;
 hw_timer_t *tim0 = nullptr;
-uint8_t displayEnable;
+volatile int displayEnable = true;
 uint16_t u = 0;
 uint16_t percent = 0;
 int outSideTemp = 0;
@@ -169,7 +169,13 @@ void IRAM_ATTR isrTimer() {
 }
 
 void IRAM_ATTR isrMotion() {
-  displayEnable = digitalRead(MOTION_PIN);
+  static unsigned long prevTime = 0;
+  unsigned long newTime = millis();
+  
+  if(newTime - prevTime > 5000) {
+    displayEnable = digitalRead(MOTION_PIN);
+    prevTime = newTime;
+  }
 }
 
 bool isLeapyear(const uint16_t& year) {
@@ -549,10 +555,10 @@ void initBLE() {
 
 void setup() {
     pinMode(DHT_PIN,INPUT_PULLUP);
-    pinMode(MOTION_PIN, INPUT_PULLUP);
+    pinMode(MOTION_PIN, INPUT);
+                                                                                                       
     u8g2.begin();
     u8g2.enableUTF8Print();
-    u8g2.setFlipMode(1);    // 180°
     WiFi.begin(ssid, password);
     dht.setup(DHT_PIN, DHTesp::AM2302);   // alternate sensor
 #ifdef _DEBUG_    
@@ -562,7 +568,7 @@ void setup() {
 
     initTimer();
     initBLE();
-    attachInterrupt(digitalPinToInterrupt(D9), isrMotion, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(MOTION_PIN), isrMotion, CHANGE);
     timerSemaphore = xSemaphoreCreateBinary();
     hQueueRequestTask = xQueueCreate(1, sizeof(weather_data));
     xTaskCreate(requestTask,"request",8192,NULL,tskIDLE_PRIORITY,&reqTaskHandle); 
@@ -602,12 +608,12 @@ void loop() {
             }
         }
 
- //       u8g2.setPowerSave(!displayEnable);
- //       if(displayEnable) {
+        u8g2.setPowerSave(!displayEnable);
+        if(displayEnable) {
             u8g2.clearBuffer();
             functions[dt.tm_sec/20](x,y,dt,wd); 
             u8g2.sendBuffer(); 
- //       }
+        }
     }
 
     if(doScroll) {
