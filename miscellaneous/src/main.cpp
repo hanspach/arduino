@@ -4,6 +4,7 @@
 #include "i2cScan.h"
 #include "temperaturesensors.h"
 #include "dcf_main.h"
+#include "u8g2test.h"
 
 // STA_Webserver
 // in the file 'server.cpp' adapt ssid & pwd to your router
@@ -20,7 +21,8 @@ void setup() {
   //initBlinking();
   //setupServer();
   //initSensors();
-  dcfInitialising();
+  //dcfInitialising();
+  initU8g2();
 }
 
 void loop() {
@@ -28,6 +30,7 @@ void loop() {
   //runScanner();
   //runSensors();
   //turnLedOnOff();
-  dcfRun();
-  delay(1000);
+  //dcfRun();
+  runU8g2();
+  //delay(1000);
 }
