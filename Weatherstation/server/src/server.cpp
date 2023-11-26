@@ -5,7 +5,7 @@
 #include "Adafruit_MCP9808.h"
 #include "AdvBLEAdvertising.h"
 
-// #define _DEBUG_  // comment out in a real operation
+//#define _DEBUG_  // comment out in a real operation
 
 void startAdv(uint16_t& grd, uint16_t& mv) {  
   BLEEddystoneTLM beacon;
