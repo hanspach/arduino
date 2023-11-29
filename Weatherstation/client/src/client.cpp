@@ -172,10 +172,8 @@ void IRAM_ATTR isrMotion() {
   static unsigned long prevTime = 0;
   unsigned long newTime = millis();
   
-  if(newTime - prevTime > 5000) {
-    displayEnable = digitalRead(MOTION_PIN);
-    prevTime = newTime;
-  }
+  displayEnable = digitalRead(MOTION_PIN);
+  
 }
 
 bool isLeapyear(const uint16_t& year) {

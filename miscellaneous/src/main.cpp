@@ -5,7 +5,11 @@
 #include "temperaturesensors.h"
 #include "dcf_main.h"
 #include "u8g2test.h"
+#include "hc_sr501.h"
 
+#ifndef LED_BUILTIN
+    #define LED_BUILTIN 2
+#endif
 // STA_Webserver
 // in the file 'server.cpp' adapt ssid & pwd to your router
 // start Serial Monitor, run the programme
@@ -22,7 +26,8 @@ void setup() {
   //setupServer();
   //initSensors();
   //dcfInitialising();
-  initU8g2();
+  //initU8g2();
+  initMotionSensor(15, LED_BUILTIN);
 }
 
 void loop() {
@@ -31,6 +36,7 @@ void loop() {
   //runSensors();
   //turnLedOnOff();
   //dcfRun();
-  runU8g2();
+  //runU8g2();
+  runMotionSensor();
   //delay(1000);
 }
