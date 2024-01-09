@@ -7,7 +7,7 @@
 
 //#define _DEBUG_  // comment out in a real operation
 
-void startAdv(uint16_t& grd, uint16_t& mv) {  
+void startAdv(int& grd, uint16_t& mv) {  
   BLEEddystoneTLM beacon;
   
   beacon.setVolt(mv);
@@ -50,7 +50,7 @@ void setup() {
 void loop() {
   sensor.wake();
   float fTemp = sensor.readTempC();
-  uint16_t iTemp = (uint16_t)fTemp;
+  int iTemp = (int)fTemp;
   uint16_t mv = (uint16_t)(getBatteryVoltage() * 1000);
   startAdv(iTemp, mv);
 
