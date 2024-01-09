@@ -20,6 +20,10 @@ void startAdv(int& grd, uint16_t& mv) {
   Bluefruit.Advertising.setInterval(160, 160);    // in unit of 0.625 ms
   Bluefruit.Advertising.setFastTimeout(30);      // number of seconds in fast mode
   Bluefruit.Advertising.start(5);                // 0 = Don't stop advertising after n seconds  
+
+#ifdef _DEBUG_ 
+  Serial.println(beacon.toString().c_str());
+#endif
 }
 
 float getBatteryVoltage() {
@@ -54,9 +58,6 @@ void loop() {
   uint16_t mv = (uint16_t)(getBatteryVoltage() * 1000);
   startAdv(iTemp, mv);
 
-#ifdef _DEBUG_    
-  Serial.printf("Temp:%d°C U:%dmV\n",iTemp,mv);
-#endif
   delay(1000);
   sensor.shutdown();
   delay(150000);      // 2.5 min

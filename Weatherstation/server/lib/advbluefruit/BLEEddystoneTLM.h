@@ -6,7 +6,7 @@ class BLEEddystoneTLM {
 public:
     BLEEddystoneTLM();
     uint16_t    getVolt();
-    uint16_t    getTemp();
+    int16_t     getTemp();
     uint32_t    getCount();
     uint32_t    getTime();
     bool        start(void);
@@ -23,7 +23,7 @@ private:
         uint8_t frameType;
         uint8_t version;
         uint16_t volt;
-        uint16_t temp;
+        int16_t  temp;
         uint32_t advCount;
         uint32_t tmil;
     } m_data;

@@ -9,7 +9,7 @@
 #include "U8g2lib.h"
 #include "DHTesp.h"
 #include "privatedata.h"
-// #define _DEBUG_ no Serial.print
+
 #define DHT_PIN 10  // Pin 18 ESP32
 #define MOTION_PIN 9
 #define CLOUDY 64
@@ -21,7 +21,7 @@
 #define STARRY 68
 #define SUNNY 69
 #define PERCENT 37
-#define ESP32_DEBUG   // for dubug purpose
+// #define _DEBUG_ // no Serial.print
 
 const char*  ssid    = SSID;                                            // replace with your SSID
 const char* password = PWD;                                             // replace with your password
@@ -71,7 +71,7 @@ static char buffer[36];
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 DHTesp dht;
 hw_timer_t *tim0 = nullptr;
-volatile int displayEnable = true;
+//volatile int displayEnable = true;
 uint16_t u = 0;
 uint16_t percent = 0;
 int outSideTemp = 0;
@@ -145,6 +145,9 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
                     portENTER_CRITICAL(&mux);
                     u = p[0] + (p[1] << 8);
                     outSideTemp  = p[2] + (p[3] << 8);
+                    if((outSideTemp & 0x8000) == 0x8000) {
+                        outSideTemp -= 65536;
+                    }
                     validOutTemp = true;
                     t1 = millis();
                     portEXIT_CRITICAL(&mux);
@@ -172,7 +175,7 @@ void IRAM_ATTR isrMotion() {
   static unsigned long prevTime = 0;
   unsigned long newTime = millis();
   
-  displayEnable = digitalRead(MOTION_PIN);
+  //displayEnable = digitalRead(MOTION_PIN);
   
 }
 
@@ -582,7 +585,7 @@ void loop() {
     uint8_t y;
 
     if(xQueueReceive(hQueueRequestTask,&wd, 10 / portTICK_PERIOD_MS) == pdTRUE) {
-#ifdef _DEBUG
+#ifdef _DEBUG_
         Serial.printf("Request-Queue-Time:%d:%d\n",wd.now.tm_hour,wd.now.tm_min);
 #endif
         dt = wd.now;
@@ -606,12 +609,12 @@ void loop() {
             }
         }
 
-        u8g2.setPowerSave(!displayEnable);
-        if(displayEnable) {
+       // u8g2.setPowerSave(!displayEnable);
+       // if(displayEnable) {
             u8g2.clearBuffer();
             functions[dt.tm_sec/20](x,y,dt,wd); 
             u8g2.sendBuffer(); 
-        }
+       // }
     }
 
     if(doScroll) {

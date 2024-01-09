@@ -19,7 +19,7 @@ bool BLEEddystoneTLM::start(void) {
     uint8_t   frame_type;
     uint8_t   version;
     uint16_t  volt;
-    uint16_t  temp;
+    int16_t   temp;
     uint32_t  count;
     uint32_t  diffTime;
 } eddy =
@@ -50,7 +50,7 @@ uint16_t BLEEddystoneTLM::getVolt() {
     return m_data.volt;
  }
     
-uint16_t  BLEEddystoneTLM::getTemp() {
+int16_t  BLEEddystoneTLM::getTemp() {
     return m_data.temp;
  }
     
@@ -79,7 +79,7 @@ void BLEEddystoneTLM::setVolt(uint16_t volt) {
 } // setVolt
 
 void BLEEddystoneTLM::setTemp(float temp) {
-	m_data.temp = (uint16_t)temp;        
+	m_data.temp = (int16_t)temp;        
 } // setTemp
 
 void BLEEddystoneTLM::setCount(uint32_t advCount) {
