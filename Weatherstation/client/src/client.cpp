@@ -111,7 +111,7 @@ std::string millisToTimeString(const uint32_t& millis) {
     return std::string(buffer);
 }
 
-void checkMinMax(minmax_data& xmin, minmax_data& xmax, const uint16_t& c, tm& dt) {
+void checkMinMax(minmax_data& xmin, minmax_data& xmax, const int& c, tm& dt) {
     if(c > xmax.temperature) {
         xmax.temperature = c;
         xmax.now = dt;
@@ -144,10 +144,11 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
                 if(callCounter != count) {
                     portENTER_CRITICAL(&mux);
                     u = p[0] + (p[1] << 8);
-                    outSideTemp  = p[2] + (p[3] << 8);
-                    if((outSideTemp & 0x8000) == 0x8000) {
-                        outSideTemp -= 65536;
+                    int t  = p[2] + (p[3] << 8);
+                    if((t & 0x8000) == 0x8000) {
+                        t -= 65536;
                     }
+                    outSideTemp = t;
                     validOutTemp = true;
                     t1 = millis();
                     portEXIT_CRITICAL(&mux);
@@ -560,6 +561,7 @@ void setup() {
                                                                                                        
     u8g2.begin();
     u8g2.enableUTF8Print();
+    u8g2.setDisplayRotation(&u8g2_cb_r2);
     WiFi.begin(ssid, password);
     dht.setup(DHT_PIN, DHTesp::AM2302);   // alternate sensor
 #ifdef _DEBUG_    
