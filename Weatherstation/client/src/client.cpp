@@ -21,7 +21,7 @@
 #define STARRY 68
 #define SUNNY 69
 #define PERCENT 37
-// #define _DEBUG_ // no Serial.print
+//#define _DEBUG_ // no Serial.print
 
 const char*  ssid    = SSID;                                            // replace with your SSID
 const char* password = PWD;                                             // replace with your password
@@ -70,6 +70,7 @@ const unsigned char bitmap_icon_battery [] PROGMEM = {
 static char buffer[36];
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 DHTesp dht;
+
 hw_timer_t *tim0 = nullptr;
 //volatile int displayEnable = true;
 uint16_t u = 0;
@@ -284,17 +285,16 @@ void insideTemperatureTask(void* param) {
     while(1) {
         TempAndHumidity tah = dht.getTempAndHumidity();
         if(dht.getStatus() == 0) {
-            inSideTemp = tah.temperature;
-            inSideHumidity   = tah.humidity;
-            validInTemp = true;
+            portENTER_CRITICAL(&mux);
+                inSideTemp = tah.temperature;
+                inSideHumidity   = tah.humidity;
+                validInTemp = true;
+            portEXIT_CRITICAL(&mux);  
+        }  
 #ifdef _DEBUG_
-            Serial.printf("Tin:%d Humidity:%d\n",inSideTemp,inSideHumidity);
+        Serial.printf("Tin:%d Humidity:%d\n",inSideTemp,inSideHumidity);
 #endif
-            vTaskSuspend(NULL);
-        }
-        else {
-           vTaskDelay(10 / portTICK_PERIOD_MS); 
-        }
+        vTaskSuspend(NULL);
     }
 }
 
@@ -556,7 +556,7 @@ void initBLE() {
 }
 
 void setup() {
-    pinMode(DHT_PIN,INPUT_PULLUP);
+    pinMode(DHT_PIN,    INPUT);
     pinMode(MOTION_PIN, INPUT);
                                                                                                        
     u8g2.begin();
