@@ -9,6 +9,10 @@
 			"path": "Weatherstation/client"
 		},
 		{
+			"name": "Weatherstation/webserver",
+			"path": "Weatherstation/webserver"
+		},
+		{
 			"name": "Funk433MHz/sender",
 			"path": "Funk433MHz/sender"
 		},
