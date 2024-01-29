@@ -212,7 +212,7 @@ void response(AsyncWebServerRequest* req) {
     content += String(inSideTemp);
   }
   if(validBleData) {
-    content += "\"otemp\": ";
+    content += ", \"otemp\": ";
     content += String(outSideTemp);
     content += ", \"batpercent\": ";
     content += String(percent);
