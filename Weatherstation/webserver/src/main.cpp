@@ -10,7 +10,7 @@
 #include <BLEDevice.h>
 #include <BLEAdvertisedDevice.h>
 #include "privatedata.h"
-//#define _DEBUG_
+#define _DEBUG_
 
  struct weather_data {
   int humidity;
@@ -140,7 +140,7 @@ void requestTask(void* param) {
         }
       }
 #ifdef _DEBUG_
-      Serial.printf("Vorhersage um %d:%02d %s\n",dt.tm_hour,dt.tm_min,wd.description.c_str());
+      Serial.printf("Vorhersage um %d:%02d %s bei %d°C\n",dt.tm_hour,dt.tm_min,wd.description.c_str(),wd.temperature);
 #endif
       http.end();
       validRequest = validDate && validWeatherData;
