@@ -5,7 +5,7 @@
 #include "Adafruit_MCP9808.h"
 #include "AdvBLEAdvertising.h"
 
-//#define _DEBUG_  // comment out in a real operation
+// #define _DEBUG_  // comment out in a real operation
 
 void startAdv(int& grd, uint16_t& mv) {  
   BLEEddystoneTLM beacon;
@@ -56,8 +56,8 @@ void loop() {
   float fTemp = sensor.readTempC();
   int iTemp = (int)fTemp;
   uint16_t mv = (uint16_t)(getBatteryVoltage() * 1000);
-  startAdv(iTemp, mv);
 
+  startAdv(iTemp, mv);
   delay(1000);
   sensor.shutdown();
   delay(150000);      // 2.5 min
